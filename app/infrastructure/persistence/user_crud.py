@@ -7,18 +7,15 @@ from app.domain.schemas.user_schema import UserRequestModel, UserResponseModel
 
 class UserCRUD(UserRepository):
 
-    @staticmethod
-    def validate_email(email: str, db: Session) -> None:
-        _user = db.query(User).filter(User.email == email).first()
-        if _user:
-            raise ValueError("Email already exists")
        
 
     @staticmethod
-    def create(self, user: UserRequestModel, db: Session) -> UserResponseModel:
+    def create(user: UserRequestModel, db: Session) -> UserResponseModel:
 
         try:
-            self.validate_email(user.email, db)
+            _user_find = db.query(User).filter(User.email == user.email).first()
+            if _user_find:
+                raise ValueError("Email already exists")
             _user = User(**user.model_dump())
             db.add(_user)
             db.commit()         
@@ -31,21 +28,21 @@ class UserCRUD(UserRepository):
         return UserResponseModel(**_user.model_dump())
     
     @staticmethod
-    def get_by_id(self, id: int, db: Session) -> UserResponseModel:
+    def get_by_id(id: int, db: Session) -> UserResponseModel:
         pass
 
     @staticmethod
-    def get_by_email(self, email: str, db: Session) -> UserResponseModel:
+    def get_by_email(email: str, db: Session) -> UserResponseModel:
         pass
 
     @staticmethod
-    def find_all(self, db: Session) -> list[UserResponseModel]:
+    def find_all(db: Session) -> list[UserResponseModel]:
         pass
 
     @staticmethod
-    def update(self, id: int, user: UserRequestModel, db: Session) -> UserResponseModel:
+    def update(id: int, user: UserRequestModel, db: Session) -> UserResponseModel:
         pass
 
     @staticmethod
-    def delete(self, id: int, db: Session) -> None:
+    def delete(id: int, db: Session) -> None:
         pass

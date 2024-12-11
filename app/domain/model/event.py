@@ -15,3 +15,12 @@ class Event(Base):
     even_date: Mapped[str] = mapped_column(DateTime, default=datetime.now(timezone.utc))
 
     user: Mapped["User"] = relationship()
+
+    def model_dump(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "attendees": self.attendees,
+            "even_date": self.even_date.__str__(),
+            "user_id": self.user_id
+        }

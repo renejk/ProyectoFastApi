@@ -7,7 +7,7 @@ from config import config
 DATABASE_URL = config.DB_URL
 
 read_engine = create_engine(DATABASE_URL, echo=True)
-sessionLocal = sessionmaker(bind=read_engine, autoflush=False, autocomit=False)
+sessionLocal = sessionmaker(bind=read_engine, autoflush=False, autocommit=False)
 
 Base = declarative_base()
 
