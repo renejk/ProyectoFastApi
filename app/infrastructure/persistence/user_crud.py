@@ -37,7 +37,12 @@ class UserCRUD(UserRepository):
 
     @staticmethod
     def find_all(db: Session) -> list[UserResponseModel]:
-        pass
+        try:
+            _users = db.query(User).all()
+            return [UserResponseModel(**_user.model_dump()) for _user in _users]
+        except Exception as e:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+                                , detail=str(e))
 
     @staticmethod
     def update(id: int, user: UserRequestModel, db: Session) -> UserResponseModel:
@@ -45,4 +50,13 @@ class UserCRUD(UserRepository):
 
     @staticmethod
     def delete(id: int, db: Session) -> None:
-        pass
+        try:
+            _user = db.query(User).filter(User.id == id).first()
+            if not _user:
+                raise ValueError("User not found")
+            db.delete(_user)
+            db.commit()
+        except Exception as e:
+            db.rollback()
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+                                , detail=str(e))
