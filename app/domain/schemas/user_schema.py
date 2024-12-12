@@ -30,6 +30,27 @@ class UserRequestModel(BaseModel):
         }
     })
 
+class UserToUpdateModel(BaseModel):
+    name: str|None = None
+    last_name: str|None = None
+    role: str|None = None
+    email: EmailStr|None = None
+    phone: str|None = None
+    status: str | None = None
+    password: str|None = None
+
+    model_config = ConfigDict(json_schema_extra={
+        "example": {
+            "name":None,
+            "last_name": None,
+            "role": None,
+            "email": None,
+            "phone": None,
+            "status": None,
+            "password": None
+        }
+    })
+
 
 class UserResponseModel(BaseModel):
     id: int

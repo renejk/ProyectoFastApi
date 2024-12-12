@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from app.domain.schemas.user_schema import UserRequestModel, UserResponseModel
+from app.domain.schemas.user_schema import UserRequestModel, UserResponseModel, UserToUpdateModel
 from app.infrastructure.persistence import UserCRUD
 
 
@@ -18,6 +18,22 @@ class UserService:
         return users
     
     @classmethod
+    def get_by_id(self, id: int, db: Session) -> UserResponseModel:
+        user = self.user_repository.get_by_id(id, db)
+        return user
+    
+    @classmethod
+    def get_by_email(self, email: str, db: Session) -> UserResponseModel:
+        user = self.user_repository.get_by_email(email, db)
+        return user
+    
+    @classmethod
+    def update(self, id: int, user: UserToUpdateModel, db: Session) -> UserResponseModel:
+        user = self.user_repository.update(id, user, db)
+        return user
+    
+    @classmethod
     def delete_by_id(self, id: int, db: Session) -> str:
         self.user_repository.delete(id, db)
         return "User deleted"
+    
