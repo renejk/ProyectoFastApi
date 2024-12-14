@@ -1,3 +1,4 @@
+from fpdf import FPDF
 from sqlalchemy.orm import Session
 from app.domain.schemas.user_schema import UserRequestModel, UserResponseModel, UserToUpdateModel
 from app.infrastructure.persistence import UserCRUD
@@ -36,4 +37,9 @@ class UserService:
     def delete_by_id(self, id: int, db: Session) -> str:
         self.user_repository.delete(id, db)
         return "User deleted"
+    
+    @classmethod
+    def get_users_pdf(self, db: Session) -> FPDF:
+        pdf = self.user_repository.get_report_users(db)
+        return pdf
     

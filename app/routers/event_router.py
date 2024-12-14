@@ -1,4 +1,6 @@
+from io import BytesIO
 from fastapi import APIRouter, status, Depends
+from fastapi.responses import StreamingResponse
 from app.infrastructure.database import get_db
 from sqlalchemy.orm import Session
 from app.domain.schemas.event_schema import EventRequestModel, EventResponseModel, EventToUpdateModel
@@ -40,3 +42,13 @@ async def update_event(id: int, event: EventToUpdateModel, db: Session = Depends
 async def delete_event(id: int, db: Session = Depends(get_db)):
     response = EventService.delete_by_id(id, db)
     return response
+
+@event_router.get("/pdf/user/{user_id}",status_code=status.HTTP_200_OK)
+async def get_events_pdf(user_id: int, db: Session = Depends(get_db)):
+    response = EventService.get_report_events(user_id, db)
+    pdf_buffer = BytesIO()
+    pdf_buffer.write(response.output(dest='S'))
+    pdf_buffer.seek(0)
+    return StreamingResponse(response, media_type="application/pdf", headers={"Content-Disposition": "attachment; filename=events.pdf"})
+
+

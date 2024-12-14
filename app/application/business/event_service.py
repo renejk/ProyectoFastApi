@@ -1,3 +1,4 @@
+from fpdf import FPDF
 from sqlalchemy.orm import Session
 from app.domain.schemas.event_schema import EventRequestModel, EventResponseModel, EventToUpdateModel
 from app.infrastructure.persistence import EventCRUD
@@ -38,6 +39,7 @@ class EventService:
         return "Event deleted"
     
     @classmethod
-    def get_report_users(self, db: Session) -> list[UserResponseModel]:
-        users = self.event_repository.get_report_users(db)
-        return users
+    def get_report_events(self, user_id: int, db: Session) -> FPDF:
+        pdf = self.event_repository.get_report_events(user_id, db)
+        return pdf
+    

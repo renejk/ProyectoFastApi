@@ -1,3 +1,4 @@
+from fpdf import FPDF
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from app.application.contracts.event_repository import EventRepository
@@ -81,14 +82,25 @@ class EventCRUD(EventRepository):
         
 
     @staticmethod
-    def get_report_users(db: Session) -> list[UserResponseModel]:
+    def get_report_events(user_id: int, db: Session) -> FPDF:
         try:
-            _users = db.query(User).join(Event).group_by(User.id).all()
-
-            # generacion pdf
-
-
-            return [UserResponseModel(**_user.model_dump()) for _user in _users]
+            _events = db.query(Event).filter(Event.user_id == user_id).all()
+            pdf = FPDF()
+            pdf.add_page()
+            pdf.set_font('Arial', 'B', 16)
+            pdf.cell(0, 10, 'Eventos', 0, 1)
+            pdf.ln(5)
+            for event in _events:                
+                pdf.set_font('Arial', '', 12)
+                pdf.cell(0, 10, f'ID: {event.id}', 0, 1)
+                pdf.cell(0, 10, f'Nombre: {event.name}', 0, 1)
+                pdf.cell(0, 10, f'Fecha: {event.attendees}', 0, 1)
+                pdf.cell(0, 10, f'Fecha: {event.event_date}', 0, 1)
+                pdf.cell(0, 10, f'Usuario: {event.user_id}', 0, 1)
+                pdf.ln(5)
+           
+            return pdf
         except Exception as e:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
                                 , detail=str(e))
+

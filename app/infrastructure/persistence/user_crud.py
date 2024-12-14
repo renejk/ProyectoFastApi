@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
+from fpdf import FPDF
 from app.application.contracts.user_repository import UserRepository
 from app.domain.model.user import User
 from app.domain.schemas.user_schema import UserRequestModel, UserResponseModel, UserToUpdateModel
@@ -86,5 +87,31 @@ class UserCRUD(UserRepository):
             db.commit()
         except Exception as e:
             db.rollback()
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+                                , detail=str(e))
+        
+    
+    @staticmethod
+    def get_report_users(db: Session) -> FPDF:
+        try:
+            _users = db.query(User).all()
+            pdf = FPDF()
+            pdf.add_page()
+            pdf.set_font('Arial', 'B', 16)
+            pdf.cell(0, 10, 'Usuarios', 0, 1)
+            pdf.ln(5)
+            for user in _users:
+                pdf.set_font('Arial', '', 12)
+                pdf.cell(0, 10, f'ID: {user.id}', 0, 1)
+                pdf.cell(0, 10, f'Nombre: {user.name}', 0, 1)
+                pdf.cell(0, 10, f'Apellido: {user.last_name}', 0, 1)
+                pdf.cell(0, 10, f'Role: {user.role}', 0, 1)
+                pdf.cell(0, 10, f'Email: {user.email}', 0, 1)
+                pdf.cell(0, 10, f'Teléfono: {user.phone}', 0, 1)
+                pdf.cell(0, 10, f'Estado: {user.status}', 0, 1)
+                pdf.ln(5)
+           
+            return pdf
+        except Exception as e:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
                                 , detail=str(e))

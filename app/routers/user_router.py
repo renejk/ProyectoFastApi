@@ -1,4 +1,6 @@
+from io import BytesIO
 from fastapi import APIRouter, status, Depends
+from fastapi.responses import StreamingResponse
 from app.infrastructure.database import get_db
 from sqlalchemy.orm import Session
 from app.domain.schemas.user_schema import UserRequestModel, UserResponseModel, UserToUpdateModel
@@ -15,6 +17,15 @@ user_router = APIRouter(
 async def create_user(user: UserRequestModel, db: Session = Depends(get_db)):
     user_response = UserService.create(user, db)
     return user_response
+
+@user_router.get("/pdf",status_code=status.HTTP_200_OK)
+async def get_users_pdf(db: Session = Depends(get_db)):
+    response =  UserService.get_users_pdf(db)
+    pdf_buffer = BytesIO()
+    pdf_buffer.write(response.output(dest='S'))
+    pdf_buffer.seek(0)
+    return StreamingResponse(pdf_buffer, media_type="application/pdf", headers={"Content-Disposition": "attachment; filename=users.pdf"})
+
 
 @user_router.get("", response_model=list[UserResponseModel], status_code=status.HTTP_200_OK)
 async def get_users(db: Session = Depends(get_db)):
@@ -40,3 +51,4 @@ async def update_user(id: int, user: UserToUpdateModel, db: Session = Depends(ge
 async def delete_user(id: int, db: Session = Depends(get_db)):
     response = UserService.delete_by_id(id, db)
     return response
+

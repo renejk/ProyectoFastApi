@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from fpdf import FPDF
 from sqlalchemy.orm import Session
 from app.domain.schemas.user_schema import UserRequestModel, UserResponseModel, UserToUpdateModel
 
@@ -30,5 +31,5 @@ class UserRepository(ABC):
         pass
 
     @abstractmethod
-    def get_report_users(self, db: Session) -> list[UserResponseModel]:
+    def get_report_users(self, db: Session) -> bytes:
         pass
