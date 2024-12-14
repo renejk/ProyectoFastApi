@@ -13,7 +13,7 @@ class EventRepository(ABC):
         pass
 
     @abstractmethod
-    def get_by_name(self, name: str, db: Session) -> EventResponseModel:
+    def get_by_user_id(self, user_id: int, db: Session) -> list[EventResponseModel]:
         pass
 
     @abstractmethod

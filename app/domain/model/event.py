@@ -1,4 +1,4 @@
-from sqlalchemy import DateTime, Integer, String, ForeignKey
+from sqlalchemy import DateTime, Float, Integer, String, ForeignKey
 from datetime import datetime, timezone
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from app.infrastructure.database import Base
@@ -12,7 +12,8 @@ class Event(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), index=True)
     name: Mapped[str] = mapped_column(String(256))
     attendees: Mapped[int] = mapped_column(Integer)
-    even_date: Mapped[str] = mapped_column(DateTime, default=datetime.now(timezone.utc))
+    event_date: Mapped[str] = mapped_column(DateTime, default=datetime.now(timezone.utc))
+    duration: Mapped[float] = mapped_column(Float)
 
     user: Mapped["User"] = relationship()
 
@@ -21,6 +22,7 @@ class Event(Base):
             "id": self.id,
             "name": self.name,
             "attendees": self.attendees,
-            "even_date": self.even_date.__str__(),
-            "user_id": self.user_id
+            "duration": self.duration,
+            "event_date": self.event_date.__str__(),
+            "user_id": self.user.id
         }

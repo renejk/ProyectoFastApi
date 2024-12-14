@@ -3,7 +3,8 @@ from pydantic import BaseModel, ConfigDict
 class EventRequestModel(BaseModel):
     name: str
     attendees: int
-    even_date: str
+    event_date: str
+    duration: float
     user_id: int
 
     @classmethod
@@ -24,17 +25,36 @@ class EventRequestModel(BaseModel):
         "example": {
             "name": "John",
             "attendees": 10,
-            "even_date": "2022-01-01T00:00:00",
+            "duration": 10.0,
+            "event_date": "2022-01-01T00:00:00",
             "user_id": 1
         }
     })
 
 
+class EventToUpdateModel(BaseModel):
+    name: str|None = None
+    attendees: int|None = None
+    event_date: str|None = None
+    duration: float|None = None
+    user_id: int|None = None    
+
+
+    model_config = ConfigDict(json_schema_extra={
+        "example": {
+            "name": None,
+            "attendees": None,
+            "event_date": None,
+            "duration": None,
+            "user_id": None
+        }
+    })
+
 class EventResponseModel(BaseModel):
     id: int
     name: str
     attendees: int
-    even_date: str
+    event_date: str
+    duration: float
     user_id: int
-    created_at: str
     model_config = ConfigDict(from_attributes=True)

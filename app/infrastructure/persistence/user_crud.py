@@ -5,13 +5,10 @@ from app.domain.model.user import User
 from app.domain.schemas.user_schema import UserRequestModel, UserResponseModel, UserToUpdateModel
 
 
-class UserCRUD(UserRepository):
-
-       
+class UserCRUD(UserRepository):       
 
     @staticmethod
     def create(user: UserRequestModel, db: Session) -> UserResponseModel:
-
         try:
             _user_find = db.query(User).filter(User.email == user.email).first()
             if _user_find:
